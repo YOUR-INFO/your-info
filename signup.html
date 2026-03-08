@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up - Your Info</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="auth-container">
@@ -38,7 +38,7 @@
 
       <p style="margin-top: 1.5rem; text-align: center; color: var(--text-secondary);">
         Already have an account?
-        <a href="/login.html" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Login</a>
+        <a href="login.html" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Login</a>
       </p>
 
       <p style="margin-top: 1rem; text-align: center;">
@@ -76,7 +76,7 @@
         successMessage.style.display = 'block';
 
         setTimeout(() => {
-          window.location.href = '/login.html';
+          window.location.href = 'login.html';
         }, 2000);
       } catch (error) {
         let errorMsg = error.message;

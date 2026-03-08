@@ -30,7 +30,7 @@
 
       <p style="margin-top: 1.5rem; text-align: center; color: var(--text-secondary);">
         Don't have an account?
-        <a href="/signup.html" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Sign up</a>
+        <a href="signup.html" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Sign up</a>
       </p>
 
       <p style="margin-top: 1rem; text-align: center;">
@@ -55,7 +55,7 @@
 
       try {
         await handleLogin(username, password);
-        window.location.href = '/dashboard.html';
+        window.location.href = 'dashboard.html';
       } catch (error) {
         errorMessage.textContent = error.message || 'Login failed. Please check your credentials.';
         errorMessage.style.display = 'block';
