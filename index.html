@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Info - Personal Portfolio Platform</title>
   <meta name="description" content="Your Info - Create and manage your personal portfolio, achievements, and schedule">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <div class="auth-container">
@@ -14,8 +14,8 @@
       <p>Your personal portfolio platform to showcase achievements and manage your schedule</p>
 
       <div style="display: flex; gap: 1rem; flex-direction: column;">
-        <a href="login.html" class="btn btn-primary">Login</a>
-        <a href="signup.html" class="btn btn-outline">Create Account</a>
+        <a href="/login.html" class="btn btn-primary">Login</a>
+        <a href="/signup.html" class="btn btn-outline">Create Account</a>
       </div>
 
       <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
@@ -37,7 +37,7 @@
     (async () => {
       const session = await getSession();
       if (session) {
-        window.location.href = 'dashboard.html';
+        window.location.href = '/dashboard.html';
       }
     })();
   </script>
