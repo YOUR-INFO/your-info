@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Your Info</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/dashboard.html" class="logo">Your Info</a>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/dashboard.html">Home</a></li>
+        <li><a href="/profile.html">Profile</a></li>
+        <li><a href="/achievements.html">Achievements</a></li>
+        <li><a href="/calendar.html">Calendar</a></li>
+        <li><a href="/settings.html">Settings</a></li>
+        <li><a href="/about.html" class="active">About</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><button id="logoutBtn" class="btn btn-primary btn-small">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding: 2rem 1rem;">
+    <div class="card">
+      <h1 style="margin-bottom: 1.5rem;">About Your Info</h1>
+
+      <div style="max-width: 800px;">
+        <h2 style="margin-top: 2rem; margin-bottom: 1rem;">What is Your Info?</h2>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem;">
+          Your Info is a comprehensive personal portfolio platform designed to help you showcase your achievements,
+          manage your professional profile, and keep track of important events in your life. Whether you're a
+          professional looking to create an online presence or someone who wants to organize their accomplishments,
+          Your Info provides all the tools you need.
+        </p>
+
+        <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Key Features</h2>
+        <div style="display: grid; gap: 1.5rem; margin-bottom: 2rem;">
+          <div style="padding: 1.5rem; background-color: var(--background); border-radius: var(--radius-md); border-left: 4px solid var(--primary-color);">
+            <h3 style="margin-bottom: 0.5rem;">Personal Profile</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+              Create a comprehensive profile with your professional information, skills, education, and experience.
+              Upload a profile photo and customize your information to showcase who you are.
+            </p>
+          </div>
+
+          <div style="padding: 1.5rem; background-color: var(--background); border-radius: var(--radius-md); border-left: 4px solid var(--secondary-color);">
+            <h3 style="margin-bottom: 0.5rem;">Achievement Tracking</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+              Document and showcase your achievements, certifications, awards, and milestones. Organize them by
+              category and date to create a comprehensive record of your accomplishments.
+            </p>
+          </div>
+
+          <div style="padding: 1.5rem; background-color: var(--background); border-radius: var(--radius-md); border-left: 4px solid var(--accent-color);">
+            <h3 style="margin-bottom: 0.5rem;">Calendar & Events</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+              Stay organized with an integrated calendar system. Track upcoming events, set reminders, and mark
+              events as completed. Never miss an important date again.
+            </p>
+          </div>
+
+          <div style="padding: 1.5rem; background-color: var(--background); border-radius: var(--radius-md); border-left: 4px solid var(--primary-color);">
+            <h3 style="margin-bottom: 0.5rem;">Dashboard Overview</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+              Get a quick overview of your upcoming events, recent achievements, and important statistics all in
+              one place. Your personalized dashboard keeps you informed at a glance.
+            </p>
+          </div>
+        </div>
+
+        <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Why Choose Your Info?</h2>
+        <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
+          <li style="padding: 0.75rem 0; color: var(--text-secondary); line-height: 1.6; border-bottom: 1px solid var(--border-color);">
+            <strong style="color: var(--text-primary);">✓ User-Friendly Interface:</strong> Clean, modern design that's easy to navigate
+          </li>
+          <li style="padding: 0.75rem 0; color: var(--text-secondary); line-height: 1.6; border-bottom: 1px solid var(--border-color);">
+            <strong style="color: var(--text-primary);">✓ Secure & Private:</strong> Your data is protected with industry-standard security
+          </li>
+          <li style="padding: 0.75rem 0; color: var(--text-secondary); line-height: 1.6; border-bottom: 1px solid var(--border-color);">
+            <strong style="color: var(--text-primary);">✓ Always Accessible:</strong> Access your portfolio from anywhere, anytime
+          </li>
+          <li style="padding: 0.75rem 0; color: var(--text-secondary); line-height: 1.6; border-bottom: 1px solid var(--border-color);">
+            <strong style="color: var(--text-primary);">✓ Fully Responsive:</strong> Works seamlessly on desktop, tablet, and mobile devices
+          </li>
+          <li style="padding: 0.75rem 0; color: var(--text-secondary); line-height: 1.6;">
+            <strong style="color: var(--text-primary);">✓ Free to Use:</strong> All features available at no cost
+          </li>
+        </ul>
+
+        <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border-radius: var(--radius-lg); color: white;">
+          <h2 style="margin-bottom: 1rem; color: white;">Ready to Get Started?</h2>
+          <p style="margin-bottom: 1.5rem; opacity: 0.9;">Create your profile and start showcasing your achievements today!</p>
+          <a href="/profile.html" class="btn" style="background-color: white; color: var(--primary-color);">Go to Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Your Info. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { signOut } from './js/supabase.js';
+
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut();
+    });
+  </script>
+</body>
+</html>

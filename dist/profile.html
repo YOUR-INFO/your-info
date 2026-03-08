@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Your Info</title>
+  <script type="module" crossorigin src="/assets/profile-DpMBL7dj.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/supabase-oO2abd2n.js">
+  <link rel="modulepreload" crossorigin href="/assets/profile-hYbPYlVC.js">
+  <link rel="stylesheet" crossorigin href="/assets/supabase-Bq2pTEzh.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/dashboard.html" class="logo">Your Info</a>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/dashboard.html">Home</a></li>
+        <li><a href="/profile.html" class="active">Profile</a></li>
+        <li><a href="/achievements.html">Achievements</a></li>
+        <li><a href="/calendar.html">Calendar</a></li>
+        <li><a href="/settings.html">Settings</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><button id="logoutBtn" class="btn btn-primary btn-small">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding: 2rem 1rem;">
+    <h1 style="margin-bottom: 2rem;">My Profile</h1>
+
+    <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
+    <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+
+    <div class="profile-header" style="flex-direction: column; align-items: start;">
+      <div style="display: flex; align-items: center; gap: 2rem; width: 100%; flex-wrap: wrap;">
+        <div id="photoContainer">
+          <div class="profile-photo-placeholder" id="photoPlaceholder">U</div>
+        </div>
+        <div>
+          <h2 id="displayName">User</h2>
+          <p style="color: var(--text-secondary);">@<span id="displayUsername">username</span></p>
+          <label for="photoUpload" class="btn btn-secondary btn-small" style="margin-top: 1rem; cursor: pointer;">
+            Change Photo
+          </label>
+          <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h2>Edit Profile Information</h2>
+
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" name="fullName">
+        </div>
+
+        <div class="form-group">
+          <label for="title">Professional Title</label>
+          <input type="text" id="title" name="title" placeholder="e.g., Software Developer, Designer">
+        </div>
+
+        <div class="form-group">
+          <label for="bio">About Me</label>
+          <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="skills">Skills (comma separated)</label>
+          <input type="text" id="skills" name="skills" placeholder="e.g., JavaScript, Python, Design">
+        </div>
+
+        <div class="form-group">
+          <label for="education">Education</label>
+          <textarea id="education" name="education" rows="3" placeholder="Your educational background..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="experience">Work Experience</label>
+          <textarea id="experience" name="experience" rows="4" placeholder="Your work experience..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="contactEmail">Contact Email</label>
+          <input type="email" id="contactEmail" name="contactEmail">
+        </div>
+
+        <div class="form-group">
+          <label for="contactPhone">Contact Phone</label>
+          <input type="tel" id="contactPhone" name="contactPhone">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Your Info. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>

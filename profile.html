@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Your Info</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/dashboard.html" class="logo">Your Info</a>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/dashboard.html">Home</a></li>
+        <li><a href="/profile.html" class="active">Profile</a></li>
+        <li><a href="/achievements.html">Achievements</a></li>
+        <li><a href="/calendar.html">Calendar</a></li>
+        <li><a href="/settings.html">Settings</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><button id="logoutBtn" class="btn btn-primary btn-small">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding: 2rem 1rem;">
+    <h1 style="margin-bottom: 2rem;">My Profile</h1>
+
+    <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
+    <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+
+    <div class="profile-header" style="flex-direction: column; align-items: start;">
+      <div style="display: flex; align-items: center; gap: 2rem; width: 100%; flex-wrap: wrap;">
+        <div id="photoContainer">
+          <div class="profile-photo-placeholder" id="photoPlaceholder">U</div>
+        </div>
+        <div>
+          <h2 id="displayName">User</h2>
+          <p style="color: var(--text-secondary);">@<span id="displayUsername">username</span></p>
+          <label for="photoUpload" class="btn btn-secondary btn-small" style="margin-top: 1rem; cursor: pointer;">
+            Change Photo
+          </label>
+          <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h2>Edit Profile Information</h2>
+
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" name="fullName">
+        </div>
+
+        <div class="form-group">
+          <label for="title">Professional Title</label>
+          <input type="text" id="title" name="title" placeholder="e.g., Software Developer, Designer">
+        </div>
+
+        <div class="form-group">
+          <label for="bio">About Me</label>
+          <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="skills">Skills (comma separated)</label>
+          <input type="text" id="skills" name="skills" placeholder="e.g., JavaScript, Python, Design">
+        </div>
+
+        <div class="form-group">
+          <label for="education">Education</label>
+          <textarea id="education" name="education" rows="3" placeholder="Your educational background..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="experience">Work Experience</label>
+          <textarea id="experience" name="experience" rows="4" placeholder="Your work experience..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="contactEmail">Contact Email</label>
+          <input type="email" id="contactEmail" name="contactEmail">
+        </div>
+
+        <div class="form-group">
+          <label for="contactPhone">Contact Phone</label>
+          <input type="tel" id="contactPhone" name="contactPhone">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Your Info. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { getCurrentUser, signOut } from './js/supabase.js';
+    import { getProfile, updateProfile, uploadProfilePhoto } from './js/profile.js';
+
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut();
+    });
+
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    let currentUser = null;
+    let currentProfile = null;
+
+    (async () => {
+      currentUser = await getCurrentUser();
+      if (!currentUser) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      currentProfile = await getProfile(currentUser.id);
+      if (currentProfile) {
+        document.getElementById('fullName').value = currentProfile.full_name || '';
+        document.getElementById('title').value = currentProfile.title || '';
+        document.getElementById('bio').value = currentProfile.bio || '';
+        document.getElementById('skills').value = currentProfile.skills ? currentProfile.skills.join(', ') : '';
+        document.getElementById('education').value = currentProfile.education || '';
+        document.getElementById('experience').value = currentProfile.experience || '';
+        document.getElementById('contactEmail').value = currentProfile.contact_email || '';
+        document.getElementById('contactPhone').value = currentProfile.contact_phone || '';
+
+        const displayName = currentProfile.full_name || currentProfile.username;
+        document.getElementById('displayName').textContent = displayName;
+        document.getElementById('displayUsername').textContent = currentProfile.username;
+
+        const photoContainer = document.getElementById('photoContainer');
+        if (currentProfile.profile_photo_url) {
+          photoContainer.innerHTML = `<img src="${currentProfile.profile_photo_url}" alt="Profile" class="profile-photo" id="profileImage">`;
+        } else {
+          const initial = (currentProfile.full_name || currentProfile.username).charAt(0).toUpperCase();
+          document.getElementById('photoPlaceholder').textContent = initial;
+        }
+      }
+    })();
+
+    document.getElementById('photoUpload').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        errorMessage.textContent = 'Please select an image file';
+        errorMessage.style.display = 'block';
+        return;
+      }
+
+      try {
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'none';
+
+        const photoUrl = await uploadProfilePhoto(file);
+        await updateProfile(currentUser.id, { profile_photo_url: photoUrl });
+
+        const photoContainer = document.getElementById('photoContainer');
+        photoContainer.innerHTML = `<img src="${photoUrl}" alt="Profile" class="profile-photo" id="profileImage">`;
+
+        successMessage.textContent = 'Profile photo updated successfully!';
+        successMessage.style.display = 'block';
+
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 3000);
+      } catch (error) {
+        errorMessage.textContent = error.message || 'Failed to upload photo';
+        errorMessage.style.display = 'block';
+      }
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+
+      const formData = {
+        full_name: document.getElementById('fullName').value.trim(),
+        title: document.getElementById('title').value.trim(),
+        bio: document.getElementById('bio').value.trim(),
+        skills: document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s),
+        education: document.getElementById('education').value.trim(),
+        experience: document.getElementById('experience').value.trim(),
+        contact_email: document.getElementById('contactEmail').value.trim(),
+        contact_phone: document.getElementById('contactPhone').value.trim()
+      };
+
+      try {
+        await updateProfile(currentUser.id, formData);
+
+        successMessage.textContent = 'Profile updated successfully!';
+        successMessage.style.display = 'block';
+
+        const displayName = formData.full_name || currentProfile.username;
+        document.getElementById('displayName').textContent = displayName;
+
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 3000);
+      } catch (error) {
+        errorMessage.textContent = error.message || 'Failed to update profile';
+        errorMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

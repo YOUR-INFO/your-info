@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements - Your Info</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/dashboard.html" class="logo">Your Info</a>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/dashboard.html">Home</a></li>
+        <li><a href="/profile.html">Profile</a></li>
+        <li><a href="/achievements.html" class="active">Achievements</a></li>
+        <li><a href="/calendar.html">Calendar</a></li>
+        <li><a href="/settings.html">Settings</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><button id="logoutBtn" class="btn btn-primary btn-small">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding: 2rem 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <h1>My Achievements</h1>
+      <button id="addAchievementBtn" class="btn btn-primary">Add Achievement</button>
+    </div>
+
+    <div id="achievementsList">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="achievementModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add Achievement</h2>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+
+      <div id="modalError" class="alert alert-error" style="display: none;"></div>
+
+      <form id="achievementForm">
+        <div class="form-group">
+          <label for="achievementTitle">Title</label>
+          <input type="text" id="achievementTitle" name="title" required>
+        </div>
+
+        <div class="form-group">
+          <label for="achievementDescription">Description</label>
+          <textarea id="achievementDescription" name="description" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="achievementDate">Date</label>
+          <input type="date" id="achievementDate" name="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="achievementCategory">Category</label>
+          <select id="achievementCategory" name="category">
+            <option value="general">General</option>
+            <option value="education">Education</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="certification">Certification</option>
+            <option value="award">Award</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Your Info. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { getCurrentUser, signOut } from './js/supabase.js';
+    import { getAchievements, addAchievement, updateAchievement, deleteAchievement } from './js/achievements.js';
+
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut();
+    });
+
+    let currentUser = null;
+    let editingAchievementId = null;
+
+    const modal = document.getElementById('achievementModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalError = document.getElementById('modalError');
+    const form = document.getElementById('achievementForm');
+
+    function openModal(achievement = null) {
+      modal.classList.add('active');
+      modalError.style.display = 'none';
+
+      if (achievement) {
+        modalTitle.textContent = 'Edit Achievement';
+        editingAchievementId = achievement.id;
+        document.getElementById('achievementTitle').value = achievement.title;
+        document.getElementById('achievementDescription').value = achievement.description || '';
+        document.getElementById('achievementDate').value = achievement.date;
+        document.getElementById('achievementCategory').value = achievement.category || 'general';
+      } else {
+        modalTitle.textContent = 'Add Achievement';
+        editingAchievementId = null;
+        form.reset();
+        document.getElementById('achievementDate').value = new Date().toISOString().split('T')[0];
+      }
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      form.reset();
+      editingAchievementId = null;
+    }
+
+    document.getElementById('addAchievementBtn').addEventListener('click', () => openModal());
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    async function loadAchievements() {
+      const achievements = await getAchievements(currentUser.id);
+      const container = document.getElementById('achievementsList');
+
+      if (achievements.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No achievements yet</h3>
+            <p>Start adding your achievements to showcase your accomplishments!</p>
+            <button class="btn btn-primary" style="margin-top: 1rem;" onclick="document.getElementById('addAchievementBtn').click()">Add First Achievement</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = achievements.map(achievement => {
+        const achievementDate = new Date(achievement.date);
+        const formattedDate = achievementDate.toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+        return `
+          <div class="achievement-item">
+            <div class="achievement-header">
+              <div>
+                <div class="achievement-title">${achievement.title}</div>
+                <div class="achievement-date">${formattedDate}</div>
+              </div>
+            </div>
+            ${achievement.description ? `<p style="margin: 0.75rem 0; color: var(--text-secondary);">${achievement.description}</p>` : ''}
+            <span class="achievement-category">${achievement.category}</span>
+            <div class="achievement-actions">
+              <button class="btn btn-outline btn-small edit-btn" data-id="${achievement.id}">Edit</button>
+              <button class="btn btn-danger btn-small delete-btn" data-id="${achievement.id}">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const achievement = achievements.find(a => a.id === btn.dataset.id);
+          openModal(achievement);
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (confirm('Are you sure you want to delete this achievement?')) {
+            try {
+              await deleteAchievement(btn.dataset.id);
+              await loadAchievements();
+            } catch (error) {
+              alert('Failed to delete achievement: ' + error.message);
+            }
+          }
+        });
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      modalError.style.display = 'none';
+
+      const achievementData = {
+        title: document.getElementById('achievementTitle').value.trim(),
+        description: document.getElementById('achievementDescription').value.trim(),
+        date: document.getElementById('achievementDate').value,
+        category: document.getElementById('achievementCategory').value
+      };
+
+      try {
+        if (editingAchievementId) {
+          await updateAchievement(editingAchievementId, achievementData);
+        } else {
+          await addAchievement(currentUser.id, achievementData);
+        }
+
+        closeModal();
+        await loadAchievements();
+      } catch (error) {
+        modalError.textContent = error.message || 'Failed to save achievement';
+        modalError.style.display = 'block';
+      }
+    });
+
+    (async () => {
+      currentUser = await getCurrentUser();
+      if (!currentUser) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      await loadAchievements();
+    })();
+  </script>
+</body>
+</html>

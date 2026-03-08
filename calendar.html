@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar - Your Info</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/dashboard.html" class="logo">Your Info</a>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/dashboard.html">Home</a></li>
+        <li><a href="/profile.html">Profile</a></li>
+        <li><a href="/achievements.html">Achievements</a></li>
+        <li><a href="/calendar.html" class="active">Calendar</a></li>
+        <li><a href="/settings.html">Settings</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><button id="logoutBtn" class="btn btn-primary btn-small">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding: 2rem 1rem;">
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <h1>My Calendar</h1>
+        <button id="addEventBtn" class="btn btn-primary">Add Event</button>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <button id="showAll" class="btn btn-outline btn-small active-filter">All Events</button>
+        <button id="showPending" class="btn btn-outline btn-small">Pending</button>
+        <button id="showCompleted" class="btn btn-outline btn-small">Completed</button>
+      </div>
+
+      <div id="eventsList">
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="eventModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add Event</h2>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+
+      <div id="modalError" class="alert alert-error" style="display: none;"></div>
+
+      <form id="eventForm">
+        <div class="form-group">
+          <label for="eventTitle">Title</label>
+          <input type="text" id="eventTitle" name="title" required>
+        </div>
+
+        <div class="form-group">
+          <label for="eventDescription">Description</label>
+          <textarea id="eventDescription" name="description" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="eventDate">Date & Time</label>
+          <input type="datetime-local" id="eventDate" name="event_date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="remindBefore">Remind me before (days)</label>
+          <input type="number" id="remindBefore" name="remind_before_days" min="0" max="30" value="1">
+        </div>
+
+        <div class="form-group">
+          <label for="eventColor">Color</label>
+          <select id="eventColor" name="color">
+            <option value="#3B82F6">Blue</option>
+            <option value="#10B981">Green</option>
+            <option value="#F59E0B">Orange</option>
+            <option value="#EF4444">Red</option>
+            <option value="#8B5CF6">Purple</option>
+            <option value="#EC4899">Pink</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Your Info. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { getCurrentUser, signOut } from './js/supabase.js';
+    import { getCalendarEvents, addCalendarEvent, updateCalendarEvent, deleteCalendarEvent, toggleEventComplete } from './js/calendar.js';
+
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut();
+    });
+
+    let currentUser = null;
+    let editingEventId = null;
+    let currentFilter = 'all';
+    let allEvents = [];
+
+    const modal = document.getElementById('eventModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalError = document.getElementById('modalError');
+    const form = document.getElementById('eventForm');
+
+    function openModal(event = null) {
+      modal.classList.add('active');
+      modalError.style.display = 'none';
+
+      if (event) {
+        modalTitle.textContent = 'Edit Event';
+        editingEventId = event.id;
+        document.getElementById('eventTitle').value = event.title;
+        document.getElementById('eventDescription').value = event.description || '';
+        const eventDate = new Date(event.event_date);
+        document.getElementById('eventDate').value = eventDate.toISOString().slice(0, 16);
+        document.getElementById('remindBefore').value = event.remind_before_days || 1;
+        document.getElementById('eventColor').value = event.color || '#3B82F6';
+      } else {
+        modalTitle.textContent = 'Add Event';
+        editingEventId = null;
+        form.reset();
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('eventDate').value = tomorrow.toISOString().slice(0, 16);
+        document.getElementById('remindBefore').value = 1;
+      }
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      form.reset();
+      editingEventId = null;
+    }
+
+    document.getElementById('addEventBtn').addEventListener('click', () => openModal());
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.active-filter').forEach(btn => btn.classList.remove('active-filter'));
+
+      if (filter === 'all') {
+        document.getElementById('showAll').classList.add('active-filter');
+      } else if (filter === 'pending') {
+        document.getElementById('showPending').classList.add('active-filter');
+      } else if (filter === 'completed') {
+        document.getElementById('showCompleted').classList.add('active-filter');
+      }
+
+      renderEvents();
+    }
+
+    document.getElementById('showAll').addEventListener('click', () => setFilter('all'));
+    document.getElementById('showPending').addEventListener('click', () => setFilter('pending'));
+    document.getElementById('showCompleted').addEventListener('click', () => setFilter('completed'));
+
+    async function loadEvents() {
+      allEvents = await getCalendarEvents(currentUser.id);
+      renderEvents();
+    }
+
+    function renderEvents() {
+      const container = document.getElementById('eventsList');
+
+      let filteredEvents = allEvents;
+      if (currentFilter === 'pending') {
+        filteredEvents = allEvents.filter(e => !e.is_completed);
+      } else if (currentFilter === 'completed') {
+        filteredEvents = allEvents.filter(e => e.is_completed);
+      }
+
+      if (filteredEvents.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No events found</h3>
+            <p>Start adding events to keep track of your schedule!</p>
+            <button class="btn btn-primary" style="margin-top: 1rem;" onclick="document.getElementById('addEventBtn').click()">Add Event</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredEvents.map(event => {
+        const eventDate = new Date(event.event_date);
+        const now = new Date();
+        const isPast = eventDate < now;
+
+        const formattedDate = eventDate.toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const completedClass = event.is_completed ? 'completed' : '';
+
+        return `
+          <div class="event-item ${completedClass}" style="border-left-color: ${event.color};">
+            <div class="event-header">
+              <div>
+                <div class="event-title" style="${event.is_completed ? 'text-decoration: line-through;' : ''}">${event.title}</div>
+                <div class="event-date">${formattedDate}</div>
+              </div>
+              <div>
+                <input type="checkbox" ${event.is_completed ? 'checked' : ''} class="complete-checkbox" data-id="${event.id}" style="width: 20px; height: 20px; cursor: pointer;">
+              </div>
+            </div>
+            ${event.description ? `<p style="margin: 0.75rem 0; color: var(--text-secondary);">${event.description}</p>` : ''}
+            ${isPast && !event.is_completed ? '<span style="color: var(--danger-color); font-size: 0.875rem; font-weight: 500;">⚠ Past due</span>' : ''}
+            <div class="event-actions">
+              <button class="btn btn-outline btn-small edit-btn" data-id="${event.id}">Edit</button>
+              <button class="btn btn-danger btn-small delete-btn" data-id="${event.id}">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.complete-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', async () => {
+          try {
+            await toggleEventComplete(checkbox.dataset.id, checkbox.checked);
+            await loadEvents();
+          } catch (error) {
+            alert('Failed to update event: ' + error.message);
+            checkbox.checked = !checkbox.checked;
+          }
+        });
+      });
+
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const event = allEvents.find(e => e.id === btn.dataset.id);
+          openModal(event);
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (confirm('Are you sure you want to delete this event?')) {
+            try {
+              await deleteCalendarEvent(btn.dataset.id);
+              await loadEvents();
+            } catch (error) {
+              alert('Failed to delete event: ' + error.message);
+            }
+          }
+        });
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      modalError.style.display = 'none';
+
+      const eventData = {
+        title: document.getElementById('eventTitle').value.trim(),
+        description: document.getElementById('eventDescription').value.trim(),
+        event_date: new Date(document.getElementById('eventDate').value).toISOString(),
+        remind_before_days: parseInt(document.getElementById('remindBefore').value),
+        color: document.getElementById('eventColor').value
+      };
+
+      try {
+        if (editingEventId) {
+          await updateCalendarEvent(editingEventId, eventData);
+        } else {
+          await addCalendarEvent(currentUser.id, eventData);
+        }
+
+        closeModal();
+        await loadEvents();
+      } catch (error) {
+        modalError.textContent = error.message || 'Failed to save event';
+        modalError.style.display = 'block';
+      }
+    });
+
+    (async () => {
+      currentUser = await getCurrentUser();
+      if (!currentUser) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      await loadEvents();
+    })();
+  </script>
+</body>
+</html>

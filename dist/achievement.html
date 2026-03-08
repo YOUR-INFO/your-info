@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements - Your Info</title>
+  <script type="module" crossorigin src="/assets/achievements-B6NyTJ2A.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/supabase-oO2abd2n.js">
+  <link rel="modulepreload" crossorigin href="/assets/achievements-DaN-Fz_D.js">
+  <link rel="stylesheet" crossorigin href="/assets/supabase-Bq2pTEzh.css">
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/dashboard.html" class="logo">Your Info</a>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/dashboard.html">Home</a></li>
+        <li><a href="/profile.html">Profile</a></li>
+        <li><a href="/achievements.html" class="active">Achievements</a></li>
+        <li><a href="/calendar.html">Calendar</a></li>
+        <li><a href="/settings.html">Settings</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><button id="logoutBtn" class="btn btn-primary btn-small">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding: 2rem 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <h1>My Achievements</h1>
+      <button id="addAchievementBtn" class="btn btn-primary">Add Achievement</button>
+    </div>
+
+    <div id="achievementsList">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="achievementModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add Achievement</h2>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+
+      <div id="modalError" class="alert alert-error" style="display: none;"></div>
+
+      <form id="achievementForm">
+        <div class="form-group">
+          <label for="achievementTitle">Title</label>
+          <input type="text" id="achievementTitle" name="title" required>
+        </div>
+
+        <div class="form-group">
+          <label for="achievementDescription">Description</label>
+          <textarea id="achievementDescription" name="description" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="achievementDate">Date</label>
+          <input type="date" id="achievementDate" name="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="achievementCategory">Category</label>
+          <select id="achievementCategory" name="category">
+            <option value="general">General</option>
+            <option value="education">Education</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="certification">Certification</option>
+            <option value="award">Award</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Your Info. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>
