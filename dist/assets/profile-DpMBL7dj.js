@@ -1,1 +1,70 @@
-import{a as d,b as c}from"./supabase-oO2abd2n.js";import{g as r,u,a as s}from"./profile-hYbPYlVC.js";const y=document.getElementById("hamburger"),p=document.getElementById("navLinks");y.addEventListener("click",()=>{p.classList.toggle("active")});document.getElementById("logoutBtn").addEventListener("click",async()=>{await d()});const l=document.getElementById("errorMessage"),o=document.getElementById("successMessage");let i=null,e=null;(async()=>{if(i=await c(),!i){window.location.href="/login.html";return}if(e=await r(i.id),e){document.getElementById("fullName").value=e.full_name||"",document.getElementById("title").value=e.title||"",document.getElementById("bio").value=e.bio||"",document.getElementById("skills").value=e.skills?e.skills.join(", "):"",document.getElementById("education").value=e.education||"",document.getElementById("experience").value=e.experience||"",document.getElementById("contactEmail").value=e.contact_email||"",document.getElementById("contactPhone").value=e.contact_phone||"";const a=e.full_name||e.username;document.getElementById("displayName").textContent=a,document.getElementById("displayUsername").textContent=e.username;const n=document.getElementById("photoContainer");if(e.profile_photo_url)n.innerHTML=`<img src="${e.profile_photo_url}" alt="Profile" class="profile-photo" id="profileImage">`;else{const t=(e.full_name||e.username).charAt(0).toUpperCase();document.getElementById("photoPlaceholder").textContent=t}}})();document.getElementById("photoUpload").addEventListener("change",async a=>{const n=a.target.files[0];if(n){if(!n.type.startsWith("image/")){l.textContent="Please select an image file",l.style.display="block";return}try{l.style.display="none",o.style.display="none";const t=await u(n);await s(i.id,{profile_photo_url:t});const m=document.getElementById("photoContainer");m.innerHTML=`<img src="${t}" alt="Profile" class="profile-photo" id="profileImage">`,o.textContent="Profile photo updated successfully!",o.style.display="block",setTimeout(()=>{o.style.display="none"},3e3)}catch(t){l.textContent=t.message||"Failed to upload photo",l.style.display="block"}}});document.getElementById("profileForm").addEventListener("submit",async a=>{a.preventDefault(),l.style.display="none",o.style.display="none";const n={full_name:document.getElementById("fullName").value.trim(),title:document.getElementById("title").value.trim(),bio:document.getElementById("bio").value.trim(),skills:document.getElementById("skills").value.split(",").map(t=>t.trim()).filter(t=>t),education:document.getElementById("education").value.trim(),experience:document.getElementById("experience").value.trim(),contact_email:document.getElementById("contactEmail").value.trim(),contact_phone:document.getElementById("contactPhone").value.trim()};try{await s(i.id,n),o.textContent="Profile updated successfully!",o.style.display="block";const t=n.full_name||e.username;document.getElementById("displayName").textContent=t,setTimeout(()=>{o.style.display="none"},3e3)}catch(t){l.textContent=t.message||"Failed to update profile",l.style.display="block"}});
+import { a as d,
+b as c }
+from "./supabase-oO2abd2n.js";
+import { g as r,
+u,
+a as s }
+from "./profile-hYbPYlVC.js";
+const y = document.getElementById("hamburger"),
+p = document.getElementById("navLinks");
+y.addEventListener("click",() => { p.classList.toggle("active") });
+document.getElementById("logoutBtn").addEventListener("click", async() => { await d() });
+const l = document.getElementById("errorMessage"),
+o = document.getElementById("successMessage");
+let i = null,
+e = null;
+(
+    async() => { if(i = await c(), ! i) { window.location.href = "/login.html";
+return } if(e = await r(i.id), e) { document.getElementById("fullName").value = e.full_name || "",
+document.getElementById("title").value = e.title || "",
+document.getElementById("bio").value = e.bio || "",
+document.getElementById("skills").value = e.skills ? e.skills.join(", ") :"",
+document.getElementById("education").value = e.education || "",
+document.getElementById("experience").value = e.experience || "",
+document.getElementById("contactEmail").value = e.contact_email || "",
+document.getElementById("contactPhone").value = e.contact_phone || "";
+const a = e.full_name || e.username;
+document.getElementById("displayName").textContent = a,
+document.getElementById("displayUsername").textContent = e.username;
+const n = document.getElementById("photoContainer");
+if(e.profile_photo_url) n.innerHTML = `<img src="${e.profile_photo_url}" alt="Profile" class="profile-photo" id="profileImage">`;
+else { const t =(e.full_name || e.username).charAt(0).toUpperCase();
+document.getElementById("photoPlaceholder").textContent = t } } }
+)();
+document.getElementById("photoUpload").addEventListener(
+    "change",
+    async a => { const n = a.target.files [0];
+if(n) { if(! n.type.startsWith("image/")) { l.textContent = "Please select an image file",
+l.style.display = "block";
+return } try { l.style.display = "none",
+o.style.display = "none";
+const t = await u(n);
+await s(i.id, { profile_photo_url :t });
+const m = document.getElementById("photoContainer");
+m.innerHTML = `<img src="${t}" alt="Profile" class="profile-photo" id="profileImage">`,
+o.textContent = "Profile photo updated successfully!",
+o.style.display = "block",
+setTimeout(() => { o.style.display = "none" }, 3e3) } catch(t) { l.textContent = t.message || "Failed to upload photo",
+l.style.display = "block" } } }
+);
+document.getElementById("profileForm").addEventListener(
+    "submit",
+    async a => { a.preventDefault(),
+    l.style.display = "none",
+    o.style.display = "none";
+const n = { full_name :document.getElementById("fullName").value.trim(),
+title :document.getElementById("title").value.trim(),
+bio :document.getElementById("bio").value.trim(),
+skills :document.getElementById("skills").value.split(",").map(t => t.trim()).filter(t => t),
+education :document.getElementById("education").value.trim(),
+experience :document.getElementById("experience").value.trim(),
+contact_email :document.getElementById("contactEmail").value.trim(),
+contact_phone :document.getElementById("contactPhone").value.trim() };
+try { await s(i.id, n),
+o.textContent = "Profile updated successfully!",
+o.style.display = "block";
+const t = n.full_name || e.username;
+document.getElementById("displayName").textContent = t,
+setTimeout(() => { o.style.display = "none" }, 3e3) } catch(t) { l.textContent = t.message || "Failed to update profile",
+l.style.display = "block" } }
+);
